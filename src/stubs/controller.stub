@@ -239,4 +239,21 @@ class __controller_class_name__ extends Controller
         $out->setData($data);
         return $out;
     }
+    
+    /* METODO AGREGADO PARA OBTENER INFORMACION DEL MODULO Y PODER GENERAR TABLAS DE INFORMACION RELACIONADA */
+	public function infoajax($attribute=null){
+		$model = new __model_name__();
+		$relationships = $model->relationships;		
+		$return = [
+		'show_action'=>$this->show_action,
+		'view_col' => $this->view_col,
+		'listing_cols' => $this->listing_cols,
+		'relationships' => isset($relationships)?$relationships:null,
+		];
+		if($attribute!=null){
+			return response()->json($return[$attribute]);
+		}else{
+			return response()->json($return);
+		}		
+	}
 }
