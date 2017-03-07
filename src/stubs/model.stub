@@ -26,5 +26,17 @@ class __model_class_name__ extends Model
     
     protected $dates = ['deleted_at'];
     
-    public $relationships = [];
+    public function getSubpanelsInfo(){	
+		$relationships = [];	
+		$relatedModules = ModuleFields::where('popup_vals', '=', "@{$this->table}")->get();		
+		foreach ($relatedModules as $relatedModule) {
+			if(Module::hasAccess($relatedModule->module)) {	
+				$module = Module::find($relatedModule->module);		
+				$module->colname = $relatedModule->colname;
+				array_push($relationships, $module);
+			}
+		}
+		return $relationships;
+	}
+    
 }
