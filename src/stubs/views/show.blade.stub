@@ -112,9 +112,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div role="tabpanel" class="tab-pane fade in" id="tab-subpanels">
+        </div>	
+					
+	<div role="tabpanel" class="tab-pane fade in" id="tab-subpanels">
 			<div class="tab-content">
 
 				@push('styles')
@@ -124,30 +124,27 @@
 				@push('scripts')
 				<script src="{{ asset('la-assets/plugins/datatables/datatables.min.js') }}"></script>
 				@endpush
-
-				@if(count($client->relationships)>0)
-					@foreach($client->relationships as $module=>$properties)
+				@php 
+					$subpaneles = $client->getSubpanelsInfo();
+				@endphp
+				@if(count($subpaneles)>0)
+					@foreach($subpaneles as $module)
 					@php 
-						$properties = (object) $properties; 
-						$model_lower = strtolower($properties->model);
+						$model_lower = strtolower($module->model);
 						$url_info_ajax = url(config('laraadmin.adminRoute') ."/{$model_lower}_info_ajax");
 						$url_dt_ajax = url(config('laraadmin.adminRoute') . "/{$model_lower}_dt_ajax");
 					@endphp
 					<div class="panel infolist">
 						<div class="panel-default panel-heading">
-							<h4>{{$properties->label}}</h4>
+							<h4>{{$module->label}}</h4>
 						</div>
 						<div class="panel-body">
 							<div class="box box-success">						
 								<div class="box-body">
-									<table id="{{strtolower($module)}}" class="table table-bordered" style="width: 100%">
+									<table id="{{$module->name_db}}" class="table table-bordered" style="width: 100%">
 										<thead>
 											<tr class="success">
-												<th>Id</th>
-												<th>Telefono</th>
-												<th>Tipo</th>	
-												<th>Cliente</th>									
-												<th>Actions</th>
+												
 											</tr>
 										</thead>
 										<tbody>
