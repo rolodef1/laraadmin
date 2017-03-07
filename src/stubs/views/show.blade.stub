@@ -96,6 +96,7 @@
     <ul data-toggle="ajax-tab" class="nav nav-tabs profile" role="tablist">
         <li class=""><a href="{{ url(config('laraadmin.adminRoute') . '/__db_table_name__') }}" data-toggle="tooltip" data-placement="right" title="Back to __module_name_2__"><i class="fa fa-chevron-left"></i></a></li>
         <li class="active"><a role="tab" data-toggle="tab" class="active" href="#tab-general-info" data-target="#tab-info"><i class="fa fa-bars"></i> General Info</a></li>
+        <li class=""><a role="tab" data-toggle="tab" href="#tab-subpanels-info" data-target="#tab-subpanels"><i class="fa fa-list"></i>Informacion Relacionada</a></li>
         <li class=""><a role="tab" data-toggle="tab" href="#tab-timeline" data-target="#tab-timeline"><i class="fa fa-clock-o"></i> Timeline</a></li>
     </ul>
 
@@ -112,6 +113,114 @@
                 </div>
             </div>
         </div>
+        
+        <div role="tabpanel" class="tab-pane fade in" id="tab-subpanels">
+			<div class="tab-content">
+
+				@push('styles')
+				<link rel="stylesheet" type="text/css" href="{{ asset('la-assets/plugins/datatables/datatables.min.css') }}"/>
+				@endpush
+
+				@push('scripts')
+				<script src="{{ asset('la-assets/plugins/datatables/datatables.min.js') }}"></script>
+				@endpush
+
+				@if(count($client->relationships)>0)
+					@foreach($client->relationships as $module=>$properties)
+					@php 
+						$properties = (object) $properties; 
+						$model_lower = strtolower($properties->model);
+						$url_info_ajax = url(config('laraadmin.adminRoute') ."/{$model_lower}_info_ajax");
+						$url_dt_ajax = url(config('laraadmin.adminRoute') . "/{$model_lower}_dt_ajax");
+					@endphp
+					<div class="panel infolist">
+						<div class="panel-default panel-heading">
+							<h4>{{$properties->label}}</h4>
+						</div>
+						<div class="panel-body">
+							<div class="box box-success">						
+								<div class="box-body">
+									<table id="{{strtolower($module)}}" class="table table-bordered" style="width: 100%">
+										<thead>
+											<tr class="success">
+												<th>Id</th>
+												<th>Telefono</th>
+												<th>Tipo</th>	
+												<th>Cliente</th>									
+												<th>Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					@push('scripts')
+					<script>
+						$(function () {		
+							/*Obtiene informacion del modulo por ajax*/
+							$.get( "{{ $url_info_ajax }}", function( resp ) {
+								/*Obtiene la posicion en la lista de columnas del colname*/
+								var colname_position = resp.listing_cols.indexOf("{{$module->colname}}");
+								/*Llama a DataTable para obtener informacion filtrando por la clave foranea*/
+								$("#{{$module->name_db}}").DataTable({								
+								processing: true,
+								serverSide: true,
+								/*Obtiene informacion realizando una llamada ajax*/
+								ajax: "{{ $url_dt_ajax }}",
+								/*Obtiene las columnas que tendra la tabla*/
+								columns: ((data) => {									
+									let columns = data.listing_cols.map((elem,index) => {										
+										return {title: elem};									
+										});
+									if(data.show_action){
+										columns.push({title: "Acciones"});
+									}
+									return columns;
+								})(resp),
+								language: {
+									lengthMenu: "_MENU_",			
+									search: "_INPUT_",
+									searchPlaceholder: "Search"
+								},		
+								/*Modifica la tabla, establece que columnas son filtrables, solo debe ser filtrable colname*/
+								columnDefs: ((data,colname) => {
+									let columnDefsArr = [];
+									let listing_cols = data.listing_cols;
+									if(data.show_action){
+										/*La ultima columna Acciones no es ordenable*/
+										columnDefsArr.push({ orderable: false, targets: [-1] });
+									}
+									/*Obtiene el inidice del colname en la lista de columnas*/
+									let colname_index = listing_cols.indexOf(colname);
+									/*Convierte a la columna colname en no visible y filtrable*/
+									columnDefsArr.push({"targets": [ colname_index ], "visible": false, "searchable": true});
+									/*Elimina de la lista de columnas el colname*/
+									delete listing_cols[colname_index];
+									/*Establece los indices de las columnas que no son filtrables*/
+									columnDefsArr.push({"targets": listing_cols.map( (elem,index) => {return index;} ), "searchable": false});		
+									return columnDefsArr;
+								})(resp,"{{$module->colname}}"),
+
+								}).column(colname_position).search("{{$client->id}}",false,true).draw();
+								/*Oculta el input search del subpanel*/
+								$("#{{$module->name_db}}_filter").hide();
+							},"json");
+							
+						});
+					</script>
+					@endpush
+
+					@endforeach
+				@endif
+
+			</div>
+		</div>
+        
         <div role="tabpanel" class="tab-pane fade in p20 bg-white" id="tab-timeline">
             <ul class="timeline timeline-inverse">
                 <!-- timeline time label -->
