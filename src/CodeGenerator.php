@@ -61,6 +61,34 @@ class CodeGenerator
         file_put_contents(base_path('app/Http/Controllers/LA/' . $config->controllerName . ".php"), $md);
     }
     
+    public static function createApiController($config, $comm = null) {
+
+        $templateDirectory = __DIR__.'/stubs';
+
+        LAHelper::log("info", "Creating api controller...", $comm);
+        $md = file_get_contents($templateDirectory."/apicontroller.stub");
+        
+        $md = str_replace("__controller_class_name__", $config->controllerName, $md);
+        $md = str_replace("__model_name__", $config->modelName, $md);
+        $md = str_replace("__module_name__", $config->moduleName, $md);
+        $md = str_replace("__view_column__", $config->module->view_col, $md);
+
+        // Listing columns
+        $listing_cols = "";
+        foreach ($config->module->fields as $field) {
+            $listing_cols .= "'".$field['colname']."', ";
+        }
+        $listing_cols = trim($listing_cols, ", ");
+
+        $md = str_replace("__listing_cols__", $listing_cols, $md);
+        $md = str_replace("__view_folder__", $config->dbTableName, $md);
+        $md = str_replace("__route_resource__", $config->dbTableName, $md);
+        $md = str_replace("__db_table_name__", $config->dbTableName, $md);
+        $md = str_replace("__singular_var__", $config->singularVar, $md);
+
+        file_put_contents(base_path('app/Http/Controllers/apiLA/'.$config->controllerName.".php"), $md);
+    }
+    
     /**
      * Generate Model file
      *
