@@ -125,7 +125,7 @@
 				<script src="{{ asset('la-assets/plugins/datatables/datatables.min.js') }}"></script>
 				@endpush
 				@php 
-					$subpaneles = $client->getSubpanelsInfo();
+					$subpaneles = $__singular_var__->getSubpanelsInfo();
 				@endphp
 				@if(count($subpaneles)>0)
 					@foreach($subpaneles as $module)
@@ -211,7 +211,7 @@
 									return columnDefsArr;
 								})(resp,"{{$module->colname}}"),
 
-								}).column(colname_position).search("{{$client->id}}",false,true).draw();
+								}).column(colname_position).search("{{$__singular_var__->id}}",false,true).draw();
 								/*Oculta el input search del subpanel*/
 								$("#{{$module->name_db}}_filter").hide();
 							},"json");
