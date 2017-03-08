@@ -508,8 +508,8 @@ class LAHelper
      */
     public static function real_module_name($name)
     {
-        $name = str_replace('_', ' ', $name);
-        return $name;
+        $module = Module::get($name);		
+	return isset($module->label)?$module->label:str_replace('_', ' ', $name);
     }
     
     /**
