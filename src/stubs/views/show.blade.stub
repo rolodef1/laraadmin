@@ -162,7 +162,11 @@
 							/*Obtiene informacion del modulo por ajax*/
 							$.get( "{{ $url_info_ajax }}", function( resp ) {
 								/*Obtiene la posicion en la lista de columnas del colname*/
-								var colname_position = resp.listing_cols.indexOf("{{$module->colname}}");
+								resp.listing_cols.forEach((elem,index)=>{
+									if(elem.col == "{{$module->colname}}"){
+										colname_position = index;
+									}
+								});
 								/*Llama a DataTable para obtener informacion filtrando por la clave foranea*/
 								$("#{{$module->name_db}}").DataTable({								
 								processing: true,
@@ -172,7 +176,7 @@
 								/*Obtiene las columnas que tendra la tabla*/
 								columns: ((data) => {									
 									let columns = data.listing_cols.map((elem,index) => {										
-										return {title: elem};									
+										return {title: elem.label};									
 										});
 									if(data.show_action){
 										columns.push({title: "Acciones"});
@@ -192,8 +196,12 @@
 										/*La ultima columna Acciones no es ordenable*/
 										columnDefsArr.push({ orderable: false, targets: [-1] });
 									}
-									/*Obtiene el inidice del colname en la lista de columnas*/
-									let colname_index = listing_cols.indexOf(colname);
+									/*Obtiene el inidice del colname en la lista de columnas*/	
+									listing_cols.forEach((elem,index)=>{
+										if(elem.col == colname){
+											colname_index = index;
+										}
+									});								
 									/*Convierte a la columna colname en no visible y filtrable*/
 									columnDefsArr.push({"targets": [ colname_index ], "visible": false, "searchable": true});
 									/*Elimina de la lista de columnas el colname*/
@@ -208,7 +216,7 @@
 								$("#{{$module->name_db}}_filter").hide();
 							},"json");
 							
-						});
+						});	
 					</script>
 					@endpush
 
