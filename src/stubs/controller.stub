@@ -243,12 +243,19 @@ class __controller_class_name__ extends Controller
     /* METODO AGREGADO PARA OBTENER INFORMACION DEL MODULO Y PODER GENERAR TABLAS DE INFORMACION RELACIONADA */
 	public function infoajax($attribute=null){
 		$model = new __model_name__();
-		$relationships = $model->relationships;		
+		$moduleFields = ModuleFields::getModuleFields('__module_name__');
+		foreach ($this->listing_cols as $col) {
+			if($col!='id'){
+				$label = $moduleFields[$col]->label;
+				$listing_cols[] = ['col'=>$col,'label'=>$label];
+			}else{
+				$listing_cols[] = ['col'=>$col,'label'=>$col];
+			}
+		}
 		$return = [
 		'show_action'=>$this->show_action,
 		'view_col' => $this->view_col,
-		'listing_cols' => $this->listing_cols,
-		'relationships' => isset($relationships)?$relationships:null,
+		'listing_cols' => $listing_cols,
 		];
 		if($attribute!=null){
 			return response()->json($return[$attribute]);
