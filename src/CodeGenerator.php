@@ -85,7 +85,7 @@ class CodeGenerator
         $md = str_replace("__route_resource__", $config->dbTableName, $md);
         $md = str_replace("__db_table_name__", $config->dbTableName, $md);
         $md = str_replace("__singular_var__", $config->singularVar, $md);
-
+        mkdir(base_path('app/Http/Controllers/apiLA'));
         file_put_contents(base_path('app/Http/Controllers/apiLA/'.$config->controllerName.".php"), $md);
     }
     
