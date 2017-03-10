@@ -45,6 +45,9 @@ Route::group([
     Route::resource(config('laraadmin.adminRoute') . '/la_menus', 'MenuController');
     Route::post(config('laraadmin.adminRoute') . '/la_menus/update_hierarchy', 'MenuController@update_hierarchy');
     
+    /* ================== Relations ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/relations', 'RelationsController');
+    
     /* ================== Configuration ================== */
     Route::resource(config('laraadmin.adminRoute') . '/la_configs', '\App\Http\Controllers\LA\LAConfigController');
     
