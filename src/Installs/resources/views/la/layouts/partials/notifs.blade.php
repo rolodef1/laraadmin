@@ -136,8 +136,11 @@
 								<div class="col-xs-6 text-center mb10">
 									<a href="{{ url(config('laraadmin.adminRoute') . '/la_configs') }}"><i class="fa fa-cogs"></i> <span>Configure</span></a>
 								</div>
-								<div class="col-xs-6 text-center">
+								<div class="col-xs-6 text-center mb10">
 									<a href="{{ url(config('laraadmin.adminRoute') . '/backups') }}"><i class="fa fa-hdd-o"></i> <span>Backups</span></a>
+								</div>
+								<div class="col-xs-6 text-center mb10">
+									<a href="{{ url(config('laraadmin.adminRoute') . '/relations') }}"><i class="fa fa-exchange"></i> <span>Relations</span></a>
 								</div>
 							</li>
 							@endrole
