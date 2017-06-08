@@ -1,0 +1,3 @@
+	/* ================== __module_name__ ================== */
+	Route::resource(config('laraadmin.apiRoute') . '/__db_table_name__', 'apiLA\__controller_class_name__',['only' => ['index', 'store', 'update', 'destroy', 'show']]);
+});
