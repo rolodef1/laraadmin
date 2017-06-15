@@ -257,6 +257,21 @@ class LAInstall extends Command
 					$this->copyFile($from."/app/admin_routes.php", $to."/app/Http/admin_routes.php");
 				}
 				
+				// Api Routes
+				$this->line('Appending api routes...');
+				//if(!$this->fileContains($to."/app/Http/routes.php", "laraadmin.adminRoute")) {
+				if(LAHelper::laravel_ver() == 5.3) {
+					if(LAHelper::getLineWithString($to."/routes/web.php", "require __DIR__.'/api_routes.php';") == -1) {
+						$this->appendFile($from."/app/routes.php", $to."/routes/web.php");
+					}
+					$this->copyFile($from."/app/api_routes.php", $to."/routes/api_routes.php");
+				} else {
+					if(LAHelper::getLineWithString($to."/app/Http/routes.php", "require __DIR__.'/api_routes.php';") == -1) {
+						$this->appendFile($from."/app/routes.php", $to."/app/Http/routes.php");
+					}
+					$this->copyFile($from."/app/api_routes.php", $to."/app/Http/api_routes.php");
+				}
+				
 				// tests
 				$this->line('Generating tests...');
 				$this->copyFolder($from."/tests", $to."/tests");
